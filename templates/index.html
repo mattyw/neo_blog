@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<link rel="stylesheet" type="text/css" media="all" href="style.css"/>
+<title>NeoBlog: Main</title>
+</head>
+<body>
+<div id="Container">
+    <div id="Box1">
+        <h1>Welcome to Neo Blog!</h1>
+        <h2>A simple blog engine using a neo4j database</h2>
+        <h3>How it works</h3>
+        <p>You create posts - like you would expect from a blog engine</p>
+        <p>You can link your post to others that might be similar</p>
+        <p>Your post will list other posts that have been linked</p>
+    </div>
+    <div class="Box2">
+        <h1>New Post</h1>
+        <form name="input" action="/newpost" method="post">
+          Title: <input type="text" name="title" />
+          <br/>
+	  Content: <textarea cols="100" rows="20" name="content">
+	  </textarea>
+<!--          Content: <input type="text" name="content" /><br/>-->
+          <input type="submit" value="Submit" />
+        </form>
+	<br/>
+    </div> <!--end Box2 -->
+        {% for post in posts %}
+            <div class="Box2">
+            <a name="{{post['post_id']}}"></a>
+            <h1>{{post['title']}}</h1>
+            <p>{{post['content']}}</p>
+            <p><b>Similar Posts:</b>
+            {% for c in post['connections'] %}
+                <a href="#{{c['post_id']}}">{{c['title']}}</a>
+            {% endfor %}</p>
+	    <br/>
+            <p><b>Click to create a relationship from this post to...</b></p>
+            {% for node in all %}
+                {% if node['post_id'] != post['post_id']%}
+                    <a href="/{{post['post_id']}}/relatesto/{{node['post_id']}}">{{node['title']}}</a>
+                {% endif %}
+            {% endfor %}
+            </div>
+        {% endfor %}
+    <hr class="clear" />
+    </div> <!--end Container -->
+</body>
+</html>
