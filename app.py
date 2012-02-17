@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 if os.environ.get('NEO4J_REST_URL'):
     gdb_url = urlparse(os.environ.get('NEO4J_REST_URL'))    
-    gdb = neo4j.GraphDatabaseService('http://{host}:{port}{path}'.format(host=gdb_url.hostname, port=gdb_url.port, path=gdb_url.path), user_name=graph_db_url.username, password=graph_db_url.password)
+    gdb = neo4j.GraphDatabaseService('http://{host}:{port}{path}'.format(host=gdb_url.hostname, port=gdb_url.port, path=gdb_url.path), user_name=gdb_url.username, password=gdb_url.password)
 else:
     gdb_url = 'http://localhost:7474/db/data'
     gdb = neo4j.GraphDatabaseService(gdb_url)
