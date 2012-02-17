@@ -2,9 +2,16 @@ from flask import Flask
 from flask import request, render_template, redirect, url_for
 from py2neo import neo4j
 import uuid
+import os
 app = Flask(__name__)
 
-gdb = neo4j.GraphDatabaseService('http://localhost:7474/db/data')
+if os.environ.get('NEO4J_REST_URL'):
+    gdb_url = urlparse(os.environ.get('NEO4J_REST_URL'))    
+    gdb = neo4j.GraphDatabaseService('http://{host}:{port}{path}'.format(host=graph_db_url.hostname, port=graph_db_url.port, path=graph_db_url.path), user_name=graph_db_url.username, password=graph_db_url.password)
+else:
+    gdb_url = 'http://localhost:7474/db/data'
+    gdb = neo4j.GraphDatabaseService(gdb_url)
+
 ref_node = gdb.get_reference_node()
 
 
