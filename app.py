@@ -3,6 +3,7 @@ from flask import request, render_template, redirect, url_for
 from py2neo import neo4j
 import uuid
 import os
+from urlparse import urlparse
 app = Flask(__name__)
 
 if os.environ.get('NEO4J_REST_URL'):
