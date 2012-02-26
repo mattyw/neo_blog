@@ -3,6 +3,7 @@ from flask import request, render_template, redirect, url_for
 from py2neo import neo4j
 import uuid
 import os
+from collections import defaultdict
 from urlparse import urlparse
 app = Flask(__name__)
 
@@ -25,6 +26,21 @@ def get_node_by_id(post_id):
         if node['post_id'] == post_id:
             return node
 
+def related_nodes_with_votes(node):
+    uniq = []
+    votes = defaultdict(int)
+    related_nodes = node.get_related_nodes("all", "similar")
+    for n in related_nodes:
+        if n.get_id() not in uniq:
+            votes[n] += 1
+            uniq.append(n.get_id())
+    return [(k, v) for k, v in votes.iteritems()]
+
+def connections_by_vote_order(node):
+    votes = related_nodes_with_votes(node)
+    sorted_votes = sorted(votes,key= lambda x: x[1])
+    return [i[0] for i in sorted_votes]
+
 @app.route('/newpost', methods=['POST'])
 def new_post():
     if request.method == 'POST':
@@ -43,7 +59,7 @@ def view():
         posts.append({'title': node['title'],
                       'content': node['content'],
                       'post_id': node['post_id'],
-                      'connections': node.get_related_nodes("all", "similar")})
+                      'connections': connections_by_vote_order(node)})
     posts.reverse()
     return render_template("index.html", posts=posts, all=all_nodes)
         
